@@ -18,16 +18,16 @@
 ;; 
 ;; Answer Set Programs are mainly used to solve complex combinatorial
 ;; problems by impressive search methods.
-;; The modeling language follows a declerative approach with a minimal
+;; The modeling language follows a declarative approach with a minimal
 ;; amount of fixed syntax constructs.
 
 ;;; Install
 
-;; Open the file with emacs and run "M-x eval-buffer"
+;; Open the file with Emacs and run "M-x eval-buffer"
 ;; Open an ASP file and run "M-x pasp-mode"
 
-;; To manually load this file within your emacs config
-;; add this file to your load path and place 
+;; To manually load this file within your Emacs config
+;; add this file to your load path and place
 ;; (require 'pasp-mode)
 ;; in your init file.
 
@@ -38,15 +38,15 @@
 
 ;; - Syntax highlighting (predicates can be toggled)
 ;; - Commenting of blocks and standard
-;; - Run ASP program from within emacs and get the compilation output
-;; - Autoload mode when a *.lp file is opened 
+;; - Run ASP program from within Emacs and get the compilation output
+;; - Auto-load mode when a *.lp file is opened
 
 ;;; Todo
 
-;; - Smart indentation based on nesting deepth
+;; - Smart indentation based on nesting depth
 ;; - Refactoring of predicates/variables (complete buffer and #program parts)
 ;; - Color compilation output
-;; - Smart rearrange of compilation output (predicates separated, table...) 
+;; - Smart rearrange of compilation output (predicates separated, table...)
 ;; - yas-snippet for rules; constraints; soft constraints; generation?
 
 ;;; Keybindings
@@ -58,8 +58,8 @@
 
 ;; I'm not an elisp expert, this is a very basic major mode.
 ;; It is intended to get my hands dirty with elisp but also
-;; to be a helpfull tool.
-;; This mode should provide a basic enviroment for further
+;; to be a help full tool.
+;; This mode should provide a basic environment for further
 ;; integration of Answer Set Programs into Emacs.
 
 ;; Ideas, issues and pull requests are highly welcome!
@@ -71,7 +71,7 @@
 ;;; Customization
 
 (defcustom pasp-mode-version "0.1.0"
-  "Version of `pasp-mode'")
+  "Version of `pasp-mode'.")
 
 (defgroup pasp-mode nil
   "Major mode for editing Anwser Set Programs."
@@ -100,7 +100,7 @@
   :safe #'stringp)
 
 (defcustom pasp-pretty-symbols t
-  "Use unicode characters where appropriate."
+  "Use Unicode characters where appropriate."
   :type 'boolean
   :group 'pasp-mode)
 
@@ -150,7 +150,7 @@
         ("\\_<\\(_*[[:upper:]][[:word:]_']*\\)\\_>" . (1 font-lock-variable-name-face))
         ("_*[[:lower:]][[:word:]_']*" . pasp-constant-face)
         ;; the regex 2 lines above matches complete words
-        ;; so constants next to non-word characters are not recognized  
+        ;; so constants next to non-word characters are not recognized
         ("_*[[:upper:]][[:word:]_']*" . font-lock-variable-name-face)
         ("\\.\\|:-\\|:\\|_\\|;\\|:~\\|,\\|(\\|)\\|{\\|}\\|[\\|]" . pasp-construct-face)))
 
@@ -180,7 +180,7 @@ Needs a mode restart."
   "Taken from NodeJs -> only dummy impl.")
 
 (defun pasp-compilation-filter ()
-  "Filter clingo output. (Only dummy impl.)"
+  "Filter clingo output.  (Only dummy impl.)."
   (ansi-color-apply-on-region compilation-filter-start (point-max))
   (save-excursion
     (while (re-search-forward "^[\\[[0-9]+[a-z]" nil t)
@@ -193,16 +193,22 @@ Needs a mode restart."
     (add-hook 'compilation-filter-hook 'pasp-compilation-filter nil t)))
 
 (defun pasp-generate-command (encoding &optional instance)
-  "Generate Clingo call with some ASP input file."
+  "Generate Clingo call with some ASP input file.
+Argument ENCODING The current buffer which holds the problem encoding.
+Optional argument INSTANCE The problem instance which is solved by the encoding.
+  If no instance it is assumed to be also in the encoding file."
   (if 'instance
       (concat pasp-clingo-path " " pasp-clingo-options " " encoding " " instance)
     (concat pasp-clingo-path " " pasp-clingo-options " " encoding)))
 
 (defun pasp-run-clingo (encoding &optional instance)
-  "Run Clingo.
-
+  "Run Clingo with some ASP input files.
 Be aware: Partial ASP code may lead to abnormally exits while
-the result is sufficient."
+the result is sufficient.
+
+Argument ENCODING The current buffer which holds the problem encoding.
+Optional argument INSTANCE The problem instance which is solved by the encoding.
+  If no instance it is assumed to be also in the encoding file."
   (when (get-buffer "*clingo output*")
     (kill-buffer "*clingo output*"))
   (let ((test-command-to-run (pasp-generate-command encoding instance))
@@ -211,16 +217,16 @@ the result is sufficient."
 
 ;;;###autoload
 (defun pasp-run-buffer ()
-  "Run clingo with the current buffer as input"
+  "Run clingo with the current buffer as input."
   (interactive)
   (pasp-run-clingo (buffer-file-name)))
 
-;; save the last user input 
+;; save the last user input
 (setq pasp-last-instance "")
 
 ;;;###autoload
 (defun pasp-run (instance)
-  "Run clingo with the current buffer and some user provided instance as input."
+  "Run clingo with the current buffer and some user provided INSTANCE as input."
   (interactive
    (list (read-file-name
           (format "Instance [%s]:" (file-name-nondirectory pasp-last-instance))
@@ -228,7 +234,7 @@ the result is sufficient."
     (setq pasp-last-instance instance)
     (pasp-run-clingo (buffer-file-name) instance))
 
-;;; Utility functions 
+;;; Utility functions
 
 (defun pasp-reload-mode ()
     "Reload the PASP major mode."
@@ -267,3 +273,7 @@ the result is sufficient."
 
 ;; add mode to feature list
 (provide 'pasp-mode)
+
+(provide 'pasp-mode)
+
+;;; pasp-mode.el ends here

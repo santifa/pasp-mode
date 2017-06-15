@@ -4,7 +4,7 @@
 
 A major mode for editing [Potassco] Answer Set Programs files (`.lp`).  
 
-From the website:  
+From the Potassco website:  
 Answer Set Programming (ASP) offers a simple and powerful modeling language to solve combinatorial problems. With our tools you can concentrate on an actual problem, rather than a smart way of implementing it.
 
 ## Features
