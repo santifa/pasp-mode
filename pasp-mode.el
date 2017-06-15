@@ -1,11 +1,12 @@
-;;; pasp-mode.el ---- A major mode for editing Potassco answer set programs. -*- lexical-binding: t -*-
+;;; pasp-mode.el ---- A major mode for editing Answer Set Programs. -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2017 by Henrik Jürges
 
-;; Author: Henrik Jürges
+;; Author: Henrik Jürges <juerges.henrik@gmail.com>
 ;; URL: https://github.com/santifa/pasp-mode
 ;; Version: 0.1.0
-;; Keywords: asp, pasp, Answer Set Programs, Potassco Answer Set Programs, Major mode
+;; Package-requires: ((emacs "24.3"))
+;; Keywords: asp, pasp, Answer Set Programs, Potassco Answer Set Programs, Major mode, languages
 
 ;; You can redistribute this program and/or modify it under the terms of the GNU
 ;; General Public License as published by the Free Software Foundation; either
@@ -70,20 +71,21 @@
 
 ;;; Customization
 
-(defcustom pasp-mode-version "0.1.0"
-  "Version of `pasp-mode'.")
-
 (defgroup pasp-mode nil
   "Major mode for editing Anwser Set Programs."
   :group 'languages
   :prefix "pasp-")
+
+(defcustom pasp-mode-version "0.1.0"
+  "Version of `pasp-mode'."
+  :group 'pasp-mode)
 
 (defcustom pasp-indentation 2
   "Level of indentation."
   :type 'integer
   :group 'pasp-mode)
 
-(defcustom pasp-highlight-constants t
+(defcustom pasp-highlight-constants-p t
   "Use font locking for predicates."
   :type 'boolean
   :group 'pasp-mode)
@@ -99,7 +101,7 @@
   :group 'pasp-mode
   :safe #'stringp)
 
-(defcustom pasp-pretty-symbols t
+(defcustom pasp-pretty-symbols-p t
   "Use Unicode characters where appropriate."
   :type 'boolean
   :group 'pasp-mode)
@@ -272,8 +274,6 @@ Optional argument INSTANCE The problem instance which is solved by the encoding.
   (setq tab-width pasp-indentation))
 
 ;; add mode to feature list
-(provide 'pasp-mode)
-
 (provide 'pasp-mode)
 
 ;;; pasp-mode.el ends here
