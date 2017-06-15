@@ -110,7 +110,7 @@
 
 (defvar pasp-mode-hook
   (lambda ()
-    (when pasp-pretty-symbols
+    (when pasp-pretty-symbols-p
       (push '(":-" . ?⊢) prettify-symbols-alist)
       (push '(">=" . ?≥) prettify-symbols-alist)
       (push '("<=" . ?≤) prettify-symbols-alist)
@@ -167,7 +167,7 @@
 (defun pasp-choose-highlighting()
   "Toggle the syntax highlighting for constants.
 Needs a mode restart."
-  (if pasp-highlight-constants
+  (if pasp-highlight-constants-p
       (setq font-lock-defaults '(pasp-highlighting))
     (setq font-lock-defaults '(pasp-highlighting-no-constants))))
 
