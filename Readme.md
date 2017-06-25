@@ -1,4 +1,5 @@
 [![License GPL 3][badge-license]][copying]
+[![MELPA][melpa-badge]][melpa-package]
 
 # pasp-mode
 
@@ -21,6 +22,21 @@ Not so many at the moment:
 
 ## Installation
 
+### Melpa
+
+The Potassco ASP mode is available through the [MELPA][] repository.
+This is the recommended way to install the `pasp-mode`.
+
+You can either install `pasp-mode` by hand with:
+<kbd> M-x package-install [RET] pasp-mode [RET]</kbd>
+
+or place the following snippet into your Emacs init file:
+```el
+(unless (package-installed-p 'pasp-mode)
+  (package-refresh-contents)
+  (package-install 'pasp-mode))
+```
+
 ### Manually
 
 Download the `pasp-mode.el` file from this repository.
@@ -29,10 +45,6 @@ in your init file or load it directly with `(load "~/path/to/pasp-mode.el")`
 
 Afterwards opening an `.lp` file triggers `pasp-mode` or
 call <kbd>M-x pasp-mode</kbd> within an open asp file.
-
-### Melpa
-
-Coming soon!
 
 ## Todo
 
@@ -55,3 +67,6 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [badge-license]: https://img.shields.io/badge/license-GPL_3-green.svg
 [COPYING]: http://www.gnu.org/copyleft/gpl.html
 [Potassco]: https://potassco.org/
+[melpa-badge]: http://melpa.org/packages/ahk-mode-badge.svg
+[melpa-package]: http://melpa.org/#/pasp-mode
+[melpa]: http://melpa.org
