@@ -76,18 +76,13 @@
   :group 'languages
   :prefix "pasp-")
 
-(defcustom pasp-mode-version "0.1.0"
+(defcustom pasp-mode-version "0.2.0"
   "Version of `pasp-mode'."
   :group 'pasp-mode)
 
 (defcustom pasp-indentation 2
   "Level of indentation."
   :type 'integer
-  :group 'pasp-mode)
-
-(defcustom pasp-highlight-constants-p t
-  "Use font locking for predicates."
-  :type 'boolean
   :group 'pasp-mode)
 
 (defcustom pasp-clingo-path (executable-find "clingo")
@@ -121,22 +116,23 @@
 
 (defvar pasp-mode-syntax-table nil "Syntax table for `pasp-mode`.")
 (setq pasp-mode-syntax-table
-      (let ((synTable (make-syntax-table)))
+      (let ((table (make-syntax-table)))
         ;; modify syntax table
-        (modify-syntax-entry ?' "w" synTable)
-        (modify-syntax-entry ?% "<" synTable)
-        (modify-syntax-entry ?\n ">" synTable)
-        synTable))
+        (modify-syntax-entry ?' "w" table)
+        (modify-syntax-entry ?% "<" table)
+        (modify-syntax-entry ?\n ">" table)
+        (modify-syntax-entry ?, "_ p" table)
+        table))
 
-;;; Syntax highlighting
+;;; Syntax highlighting faces
 
-(defvar pasp-constant-face 'pasp-constant-face)
-(defface pasp-constant-face
+(defvar pasp-atom-face 'pasp-atom-face)
+(defface pasp-atom-face
   '((t (:inherit font-lock-keyword-face :weight normal)))
-  "Face for ASP constants (starting with lower case)."
+  "Face for ASP atoms (starting with lower case)."
   :group 'font-lock-highlighting-faces)
 
-(defvar pasp-constuct-face 'pasp-construct-face)
+(defvar pasp-construct-face 'pasp-construct-face)
 (defface pasp-construct-face
   '((default (:inherit font-lock-builtin-face :height 1.1)))
   "Face for ASP base constructs."
@@ -144,32 +140,35 @@
 
 ;; Syntax highlighting
 
+(defvar pasp--constructs
+  '("\\.\\|:-\\|:\\|_\\|;\\|:~\\|,\\|(\\|)\\|{\\|}\\|[\\|]\\|not " . pasp-construct-face)
+   "ASP constructs.")
+
+(defconst pasp--constant
+  '("#[[:word:]]+" . font-lock-builtin-face)
+  "ASP constants.")
+
+(defconst pasp--variable
+  '("_*[[:upper:]][[:word:]_']*" . font-lock-variable-name-face)
+  "ASP variable.")
+
+(defconst pasp--variable2
+  '("\\_<\\(_*[[:upper:]][[:word:]_']*\\)\\_>" . (1 font-lock-variable-name-face))
+  "ASP variable 2.")
+
+(defconst pasp--atom
+  '("_*[[:lower:]][[:word:]_']*" . pasp-atom-face)
+  "ASP atoms.")
+
 (defvar pasp-highlighting nil
   "Regex list for syntax highlighting.")
 (setq pasp-highlighting
-      '(("not" . font-lock-negation-char-face)
-        ("#[[:word:]]+" . font-lock-builtin-face)
-        ("\\_<\\(_*[[:upper:]][[:word:]_']*\\)\\_>" . (1 font-lock-variable-name-face))
-        ("_*[[:lower:]][[:word:]_']*" . pasp-constant-face)
-        ;; the regex 2 lines above matches complete words
-        ;; so constants next to non-word characters are not recognized
-        ("_*[[:upper:]][[:word:]_']*" . font-lock-variable-name-face)
-        ("\\.\\|:-\\|:\\|_\\|;\\|:~\\|,\\|(\\|)\\|{\\|}\\|[\\|]" . pasp-construct-face)))
-
-(defvar pasp-highlighting-no-constants nil
-  "Regex list for syntax highlighting without ASP constants.")
-(setq pasp-highlighting-no-constants
-      '(("not" . font-lock-negation-char-face)
-        ("#[[:word:]]+" . font-lock-builtin-face)
-        ("\\_<\\(_*[[:upper:]][[:word:]_']*\\)\\_>" . (1 font-lock-variable-name-face))
-        ("\\.\\|:-\\|:\\|_\\|;\\|:~\\|,\\|(\\|)\\|{\\|}" . pasp-construct-face)))
-
-(defun pasp-choose-highlighting()
-  "Toggle the syntax highlighting for constants.
-Needs a mode restart."
-  (if pasp-highlight-constants-p
-      (setq font-lock-defaults '(pasp-highlighting))
-    (setq font-lock-defaults '(pasp-highlighting-no-constants))))
+      (list
+       pasp--constructs
+       pasp--constant
+       pasp--variable2
+       pasp--atom
+       pasp--variable))
 
 ;;; Compilation
 
@@ -257,8 +256,7 @@ Optional argument INSTANCE The problem instance which is solved by the encoding.
 ;;;###autoload
 (define-derived-mode pasp-mode prog-mode "Potassco ASP"
   "A major mode for editing Answer Set Programs."
-  ;;(setq font-lock-defaults '(pasp-highlights))
-  (pasp-choose-highlighting)
+  (setq font-lock-defaults '(pasp-highlighting))
   
   ;; define the syntax for un/comment region and dwim
   (setq-local comment-start "%")
